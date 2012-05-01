@@ -8,12 +8,6 @@ SHA1_PASS=$(echo -n $ADMIN_PASS | sha1sum | cut -d " " -f 1)
 # start mysql
 /etc/init.d/mysql start
 
-# install redmine dependency gems
-cd /usr/local/src
-gem install --local -v=1.0.1 rack
-gem install --local -v=0.4.2 i18n
-rm /usr/local/src/*.gem
-
 # install redmine and configure it
 tar -zxf /usr/local/src/redmine* -C /var/www/
 
@@ -26,27 +20,26 @@ cp $RAILS_APP.orig/config/database.yml $RAILS_APP/config/
 CONF=/var/www/$RAILS_APP/db/migrate/001_setup.rb
 sed -i "s/:hashed_password \(.*\)/:hashed_password => \"$SHA1_PASS\",/" $CONF
 
-cat > /var/www/$RAILS_APP/config/additional_environment.rb <<EOF
-config.action_controller.session = { :key => "_myapp_session", :secret => "$(mcookie)" }
-EOF
+# comment out rmagick (bug in bundle install doesn't adhere to --without and --local)
+sed -i "/gem \"rmagick\"/ s/gem/#gem/" /var/www/$RAILS_APP/Gemfile
 
 cd /var/www/$RAILS_APP
+bundle install --local
+rake generate_session_store
 rake db:migrate RAILS_ENV="production"
 REDMINE_LANG=en rake redmine:load_default_data RAILS_ENV="production"
-
-mkdir -p /var/www/$RAILS_APP/tmp/pids
 
 project_init() {
 mysql --defaults-extra-file=/etc/mysql/debian.cnf <<EOF
 USE ${RAILS_APP}_production;
-INSERT projects (id, name, is_public, identifier, status, lft, rgt)
-VALUES ($1, '$2-helloworld', '1', '$2-helloworld', '1', '1', '2');
+INSERT projects (id, name, is_public, created_on, updated_on, identifier, status, lft, rgt)
+VALUES ($1, '$2-helloworld', '1', '2012-01-01 13:00:00', '2012-01-01 13:00:00', '$2-helloworld', '1', '1', '2');
 EOF
 
 mysql --defaults-extra-file=/etc/mysql/debian.cnf <<EOF
 USE ${RAILS_APP}_production;
-INSERT repositories (id, project_id, url, root_url, type)
-VALUES ($1, '$1', '$4', '$4', '$3');
+INSERT repositories (id, project_id, url, root_url, type, path_encoding, log_encoding, identifier, is_default)
+VALUES ($1, '$1', '$4', '$4', '$3', 'UTF8', 'UTF-8', '$2-helloworld', '1');
 EOF
 
 names="issue_tracking time_tracking news documents files wiki repository boards"
@@ -84,14 +77,13 @@ INSERT settings (id, name, value) VALUES
 EOF
 
 # configure outgoing email
-cat >/var/www/$RAILS_APP/config/email.yml<<EOF
+cat >/var/www/$RAILS_APP/config/configuration.yml<<EOF
 production:
-  delivery_method: :smtp
-  smtp_settings:
-    address: 127.0.0.1
-    port: 25
-    domain: :none
-    authentication: :none
+  email_delivery:
+    delivery_method: :smtp
+    smtp_settings:
+      address: "localhost"
+      port: 25
 EOF
 
 # turnkey-credit (passenger substitute x2 bug)
@@ -112,9 +104,8 @@ EOF
 
 TURNKEY_CREDIT="<div id='turnkey-credit'> <div> <a href='http://www.turnkeylinux.org/redmine'>Redmine Appliance</a> - Powered by <a href='http://www.turnkeylinux.org'>TurnKey Linux</a> </div> </div>"
 
-FOOTER=/var/www/$RAILS_APP/app/views/layouts/base.rhtml
+FOOTER=/var/www/$RAILS_APP/app/views/layouts/base.html.erb
 sed -i "s|</body>|$TURNKEY_CREDIT\n</body>|" $FOOTER
-
 
 # configure permissions
 chown -R root:www-data /var/www/$RAILS_APP
@@ -129,3 +120,7 @@ rm -rf /var/www/$RAILS_APP.orig
 
 # stop mysql
 /etc/init.d/mysql stop
+
+# cleanup
+rm -f /usr/local/src/redmine*
+
