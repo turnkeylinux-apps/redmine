@@ -1,0 +1,131 @@
+#!/bin/sh -ex
+
+RAILS_APP=railsapp
+
+ADMIN_PASS=turnkey
+SHA1_PASS=$(echo -n $ADMIN_PASS | sha1sum | cut -d " " -f 1)
+
+# start mysql
+/etc/init.d/mysql start
+
+# install redmine dependency gems
+cd /usr/local/src
+gem install --local -v=1.0.1 rack
+gem install --local -v=0.4.2 i18n
+rm /usr/local/src/*.gem
+
+# install redmine and configure it
+tar -zxf /usr/local/src/redmine* -C /var/www/
+
+cd /var/www
+
+mv $RAILS_APP $RAILS_APP.orig
+mv redmine* $RAILS_APP
+cp $RAILS_APP.orig/config/database.yml $RAILS_APP/config/
+
+CONF=/var/www/$RAILS_APP/db/migrate/001_setup.rb
+sed -i "s/:hashed_password \(.*\)/:hashed_password => \"$SHA1_PASS\",/" $CONF
+
+cat > /var/www/$RAILS_APP/config/additional_environment.rb <<EOF
+config.action_controller.session = { :key => "_myapp_session", :secret => "$(mcookie)" }
+EOF
+
+cd /var/www/$RAILS_APP
+rake db:migrate RAILS_ENV="production"
+REDMINE_LANG=en rake redmine:load_default_data RAILS_ENV="production"
+
+mkdir -p /var/www/$RAILS_APP/tmp/pids
+
+project_init() {
+mysql --defaults-extra-file=/etc/mysql/debian.cnf <<EOF
+USE ${RAILS_APP}_production;
+INSERT projects (id, name, is_public, identifier, status, lft, rgt)
+VALUES ($1, '$2-helloworld', '1', '$2-helloworld', '1', '1', '2');
+EOF
+
+mysql --defaults-extra-file=/etc/mysql/debian.cnf <<EOF
+USE ${RAILS_APP}_production;
+INSERT repositories (id, project_id, url, root_url, type)
+VALUES ($1, '$1', '$4', '$4', '$3');
+EOF
+
+names="issue_tracking time_tracking news documents files wiki repository boards"
+for name in $names; do
+mysql --defaults-extra-file=/etc/mysql/debian.cnf <<EOF
+USE ${RAILS_APP}_production;
+INSERT enabled_modules (id, project_id, name) VALUES (NULL, '$1', '$name');
+EOF
+done
+
+for tracker_id in 1 2 3; do
+mysql --defaults-extra-file=/etc/mysql/debian.cnf <<EOF
+USE ${RAILS_APP}_production;
+INSERT projects_trackers (project_id, tracker_id) VALUES ('$1', '$tracker_id');
+EOF
+done
+}
+
+# configure projects and repositories
+project_init 1 git Git        /var/cache/git/helloworld.git
+project_init 2 bzr Bazaar     /srv/repos/bzr/helloworld
+project_init 3 hg  Mercurial  /srv/repos/hg/helloworld
+project_init 4 svn Subversion file:///srv/repos/svn/helloworld
+
+# create welcome message
+mysql --defaults-extra-file=/etc/mysql/debian.cnf <<EOF
+USE ${RAILS_APP}_production;
+INSERT settings (id, name, value) VALUES 
+(1, 'welcome_text', 'h2. Getting started
+
+* Log in as *admin* and start managing your projects
+* "TurnKey Linux Redmine appliance release notes":http://www.turnkeylinux.org/redmine
+* Redmine resources ("Guide":http://www.redmine.org/guide, "Forums":http://www.redmine.org/projects/redmine/boards, "FAQ":http://www.redmine.org/wiki/redmine/FAQ)
+');
+EOF
+
+# configure outgoing email
+cat >/var/www/$RAILS_APP/config/email.yml<<EOF
+production:
+  delivery_method: :smtp
+  smtp_settings:
+    address: 127.0.0.1
+    port: 25
+    domain: :none
+    authentication: :none
+EOF
+
+# turnkey-credit (passenger substitute x2 bug)
+cat >>/var/www/$RAILS_APP/public/stylesheets/application.css<<EOF
+#turnkey-credit {
+    font-family: Tahoma,Sans,Arial,Helvetica,Verdana,sans-serif;
+    font-size: 11px;
+    text-align: center;
+    padding-top: 5px;
+}
+#turnkey-credit a {
+    text-decoration: none;
+}
+#turnkey-credit a:hover {
+    text-decoration: underline;
+}
+EOF
+
+TURNKEY_CREDIT="<div id='turnkey-credit'> <div> <a href='http://www.turnkeylinux.org/redmine'>Redmine Appliance</a> - Powered by <a href='http://www.turnkeylinux.org'>TurnKey Linux</a> </div> </div>"
+
+FOOTER=/var/www/$RAILS_APP/app/views/layouts/base.rhtml
+sed -i "s|</body>|$TURNKEY_CREDIT\n</body>|" $FOOTER
+
+
+# configure permissions
+chown -R root:www-data /var/www/$RAILS_APP
+chown -R www-data:www-data /var/www/$RAILS_APP/tmp
+chown -R www-data:www-data /var/www/$RAILS_APP/log
+chown -R www-data:www-data /var/www/$RAILS_APP/files
+chown -R www-data:www-data /var/www/$RAILS_APP/public/plugin_assets
+
+# cleanup
+rm /usr/local/src/redmine*
+rm -rf /var/www/$RAILS_APP.orig
+
+# stop mysql
+/etc/init.d/mysql stop

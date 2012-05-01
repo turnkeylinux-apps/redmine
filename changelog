@@ -1,0 +1,102 @@
+turnkey-redmine-11.1 (1) turnkey; urgency=low
+
+  * Redmine:
+
+    - Regenerate action_controller.session secret (security).
+    - Updated project creation schema due to required fields.
+    - Replaced Ruby with Ruby Enterprise (performance).
+    - Replaced Ruby Enterprise rack gem with version 1.0.1 (Redmine dep).
+    - Added i18n gem version 0.4.2 (Redmine dep).
+
+  * Set Redmine admin email and password on firstboot (convenience, security).
+
+  * Set MySQL root password on firstboot (convenience, security).
+
+  * Force MySQL to use Unicode/UTF8.
+
+  * Set postfix MTA myhostname to localhost (bugfix).
+
+  * Included libreadline-dev so rails console works (bugfix).
+
+  * Major component versions:
+
+    redmine         1.0.5 (upstream tarball)
+    ruby-enterprise 1.8.7-2010.02_i386_ubuntu10.04
+    mysql-server    5.1.41-3ubuntu12.8
+    apache2         2.2.14-5ubuntu8.4
+
+    git-core        1:1.7.0.4-1ubuntu0.1
+    bzr             2.1.1-1
+    subversion      1.6.6dfsg-2ubuntu1
+    mercurial       1.4.3-1
+
+  * Note: Please refer to turnkey-core's changelog for changes common to all
+    appliances. Here we only describe changes specific to this appliance.
+
+ -- Alon Swartz <alon@turnkeylinux.org>  Sun, 24 Dec 2010 09:02:55 +0200
+
+turnkey-redmine-2009.10 (2) hardy; urgency=low
+
+  * Installed all security updates (see manifest for package versions).
+
+  * Install security updates on firstboot (except when running live).
+
+  * Trick webmin into not checking for upgrades (managed by apt).
+
+  * Updated di-live mysql mechanism and secret regeneration.
+
+  * Included latest version of inithooks and updated scripts.
+
+  * Included wget as per common request.
+
+ -- Alon Swartz <alon@turnkeylinux.org>  Mon, 29 Mar 2010 09:02:11 +0200
+
+turnkey-redmine-2009.10 (1) hardy; urgency=low
+
+  * Initial public release of TurnKey Redmine.
+
+  * SSL support out of the box.
+
+  * Redmine configuration:
+
+    - Loaded default roles, trackers, statuses, workflows and enumerations.
+    - Configured projects to use all available trackers (bug, feature, support).
+    - Includes custom developed init scripts for bzr and svn.
+    - Includes exemplary helloworld repositories.
+
+  * Integrated version control systems:
+
+    - git:        git://addr/git
+    - svn:        svn://addr/svn
+    - bzr:        bzr://addr/bzr
+    - mercurial:  http://addr:8080
+
+  * Includes Phusion Passenger for Apache web server (mod_rails).
+
+  * Includes postfix MTA (bound to localhost) to allow sending of email from
+    Redmine (e.g., password recovery). Also added webmin-postfix module for
+    convenience.
+
+  * Regenerates all secrets during installation / firstboot (security).
+
+  * Major component versions:
+
+    redmine         0.8.4 (upstream tarball)
+
+    git-core        1:1.5.4.3-1ubuntu2.1
+    bzr             1.3.1-1ubuntu0.1
+    subversion      1.4.6dfsg1-2ubuntu1.1
+    mercurial       0.9.5-3
+
+    apache2         2.2.8-1ubuntu0.11
+    mysql-server    5.0.51a-3ubuntu5.4
+    ruby            4.1
+    rubygems        1.3.5
+    rails           2.3.4
+    rake            0.8.7
+    passenger       2.2.5
+
+  * Note: Please refer to turnkey-core's changelog for changes common to all
+    appliances. Here we only describe changes specific to this appliance.
+
+ -- Alon Swartz <alon@turnkeylinux.org>  Tue, 29 Sep 2009 15:39:41 +0200
