@@ -10,6 +10,8 @@ Option:
 import sys
 import getopt
 import hashlib
+import random
+import string
 
 from dialog_wrapper import Dialog
 from mysqlconf import MySQL
@@ -53,10 +55,12 @@ def main():
             "Enter email address for the Redmine 'admin' account.",
             "admin@example.com")
     
-    hashpass = hashlib.sha1(password).hexdigest()
+    salt = "".join(random.choice(string.letters) for line in range(16))
+    hashpass = hashlib.sha1(salt + hashlib.sha1(password).hexdigest()).hexdigest()
 
     m = MySQL()
     m.execute('UPDATE railsapp_production.users SET mail=\"%s\" WHERE login=\"admin\";' % email)
+    m.execute('UPDATE railsapp_production.users SET salt=\"%s\" WHERE login=\"admin\";' % salt)
     m.execute('UPDATE railsapp_production.users SET hashed_password=\"%s\" WHERE login=\"admin\";' % hashpass)
 
 if __name__ == "__main__":
