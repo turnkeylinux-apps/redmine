@@ -59,9 +59,9 @@ def main():
     hashpass = hashlib.sha1(salt + hashlib.sha1(password).hexdigest()).hexdigest()
 
     m = MySQL()
-    m.execute('UPDATE railsapp_production.users SET mail=\"%s\" WHERE login=\"admin\";' % email)
-    m.execute('UPDATE railsapp_production.users SET salt=\"%s\" WHERE login=\"admin\";' % salt)
-    m.execute('UPDATE railsapp_production.users SET hashed_password=\"%s\" WHERE login=\"admin\";' % hashpass)
+    m.execute('UPDATE redmine_production.users SET mail=\"%s\" WHERE login=\"admin\";' % email)
+    m.execute('UPDATE redmine_production.users SET salt=\"%s\" WHERE login=\"admin\";' % salt)
+    m.execute('UPDATE redmine_production.users SET hashed_password=\"%s\" WHERE login=\"admin\";' % hashpass)
 
 if __name__ == "__main__":
     main()
