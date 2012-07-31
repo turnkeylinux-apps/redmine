@@ -1,3 +1,47 @@
+turnkey-redmine-12.0 (1) turnkey; urgency=low
+
+  * Redmine
+
+    - Upgraded to latest upstream archive.
+    - Updated firstboot redmine configuration (passwords are now salted).
+    - Removed regen-redmine-secrets, now handled by regen-rails-secrets.
+    - Updated default configurations (eg. mail) for newer rails version.
+    - Bugfix: add creation dates to helloworld repos (UX).
+
+  * Major component versions
+
+    redmine             1.4.1 (upstream archive)
+    rails               2.3.14
+    ruby-enterprise     1.8.7-2012.02
+    apache2             2.2.16-6+squeeze7
+    mysql-server        5.1.63-0+squeeze1
+    build-essential     11.5
+
+    git-core            1:1.7.2.5-3
+    bzr                 2.1.2-1
+    subversion          1.6.12dfsg-6
+    mercurial           1.6.4-1
+
+  * Note: Please refer to turnkey-core's changelog for changes common to all
+    appliances. Here we only describe changes specific to this appliance.
+
+ -- Alon Swartz <alon@turnkeylinux.org>  Wed, 01 Aug 2012 08:00:00 +0200
+
+turnkey-redmine-11.3 (1) turnkey; urgency=low
+
+  * Installed security updates.
+  * Enabled etckeeper garbage collection by default.
+  * Upgraded to latest inithooks version (adhoc re-initialization via turnkey-init)
+
+ -- Alon Swartz <alon@turnkeylinux.org>  Mon, 05 Dec 2011 10:48:44 +0000
+
+turnkey-redmine-11.2 (1) turnkey; urgency=low
+
+  * Installed security updates.
+  * Added HubDNS package and firstboot configuration.
+
+ -- Alon Swartz <alon@turnkeylinux.org>  Fri, 15 Jul 2011 07:47:08 +0000
+
 turnkey-redmine-11.1 (1) turnkey; urgency=low
 
   * Redmine:
