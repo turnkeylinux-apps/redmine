@@ -13,7 +13,7 @@ tar -zxf $SRC/redmine-*.tar.gz -C $(dirname $WEBROOT)
 rm -rf $SRC/redmine-*.tar.gz
 
 mv $WEBROOT $WEBROOT.orig
-mv $(dirname)/redmine-* $WEBROOT
+mv $(dirname $WEBROOT)/redmine-* $WEBROOT
 cp $WEBROOT.orig/config/database.yml $WEBROOT/config/database.yml
 rm -rf $WEBROOT.orig
 
