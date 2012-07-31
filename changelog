@@ -10,7 +10,7 @@ turnkey-redmine-12.0 (1) turnkey; urgency=low
 
   * Major component versions
 
-    redmine             1.4.1 (upstream archive)
+    redmine             1.4.4 (upstream archive)
     rails               2.3.14
     ruby-enterprise     1.8.7-2012.02
     apache2             2.2.16-6+squeeze7
