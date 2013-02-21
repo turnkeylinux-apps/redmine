@@ -15,20 +15,20 @@ rm -rf $SRC/redmine-*.tar.gz
 mv $WEBROOT $WEBROOT.orig
 mv $(dirname $WEBROOT)/redmine-* $WEBROOT
 cp $WEBROOT.orig/config/database.yml $WEBROOT/config/database.yml
+sed -i "s|mysql2|mysql|" $WEBROOT/config/database.yml
 rm -rf $WEBROOT.orig
 
 CONF=$WEBROOT/db/migrate/001_setup.rb
 SHA1_PASS=$(echo -n $ADMIN_PASS | sha1sum | cut -d " " -f 1)
 sed -i "s/:hashed_password \(.*\)/:hashed_password => \"$SHA1_PASS\",/" $CONF
 
-# comment out rmagick (bug in bundle install doesn't adhere to --without and --local)
-sed -i "/gem \"rmagick\"/ s/gem/#gem/" $WEBROOT/Gemfile
-
+[ "$FAB_HTTP_PROXY" ] && export HTTP_PROXY=$FAB_HTTP_PROXY
 cd $WEBROOT
-bundle install --local
-rake generate_session_store
+bundle --without=rmagick install
+rake generate_secret_token
 rake db:migrate RAILS_ENV="production"
 REDMINE_LANG=en rake redmine:load_default_data RAILS_ENV="production"
+unset HTTP_PROXY
 
 project_init() {
 mysql --defaults-extra-file=/etc/mysql/debian.cnf <<EOF
@@ -60,10 +60,10 @@ done
 }
 
 # configure projects and repositories
-project_init 1 git Git        /var/cache/git/helloworld.git
-project_init 2 bzr Bazaar     /srv/repos/bzr/helloworld
-project_init 3 hg  Mercurial  /srv/repos/hg/helloworld
-project_init 4 svn Subversion file:///srv/repos/svn/helloworld
+project_init 1 git Repository::Git        /var/cache/git/helloworld.git
+project_init 2 bzr Repository::Bazaar     /srv/repos/bzr/helloworld
+project_init 3 hg  Repository::Mercurial  /srv/repos/hg/helloworld
+project_init 4 svn Repository::Subversion file:///srv/repos/svn/helloworld
 
 # create welcome message
 mysql --defaults-extra-file=/etc/mysql/debian.cnf <<EOF
@@ -113,7 +113,6 @@ chown -R root:www-data $WEBROOT
 chown -R www-data:www-data $WEBROOT/tmp
 chown -R www-data:www-data $WEBROOT/log
 chown -R www-data:www-data $WEBROOT/files
-chown -R www-data:www-data $WEBROOT/public/plugin_assets
 
 # stop mysql
 /etc/init.d/mysql stop
