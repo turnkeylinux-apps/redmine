@@ -2,7 +2,7 @@ turnkey-redmine-12.1 (1) turnkey; urgency=low
 
   * Upgraded to latest major version of Redmine.
 
-  * Hardcoded component versions:
+  * Upstream source component versions:
 
     redmine             2.2.3
     rubyenterprise      1.8.7-2012.02_i386_ubuntu10.04
