@@ -81,9 +81,9 @@ EOF
 cat >$WEBROOT/config/configuration.yml<<EOF
 production:
   email_delivery:
-    delivery_method: :smtp
+    delivery_method: :sendmail
     smtp_settings:
-      address: "localhost"
+      address: 127.0.0.1
       port: 25
 EOF
 
