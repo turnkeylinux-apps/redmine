@@ -15,7 +15,6 @@ rm -rf $SRC/redmine-*.tar.gz
 mv $WEBROOT $WEBROOT.orig
 mv $(dirname $WEBROOT)/redmine-* $WEBROOT
 cp $WEBROOT.orig/config/database.yml $WEBROOT/config/database.yml
-sed -i "s|mysql2|mysql|" $WEBROOT/config/database.yml
 rm -rf $WEBROOT.orig
 
 CONF=$WEBROOT/db/migrate/001_setup.rb
