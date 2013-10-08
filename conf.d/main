@@ -39,7 +39,7 @@ EOF
 mysql --defaults-extra-file=/etc/mysql/debian.cnf <<EOF
 USE redmine_production;
 INSERT repositories (id, project_id, url, root_url, type, path_encoding, log_encoding, identifier, is_default)
-VALUES ($1, '$1', '$4', '$4', '$3', 'UTF8', 'UTF-8', '$2-helloworld', '1');
+VALUES ($1, '$1', '$4', '$4', '$3', 'UTF-8', 'UTF-8', '$2-helloworld', '1');
 EOF
 
 names="issue_tracking time_tracking news documents files wiki repository boards"
