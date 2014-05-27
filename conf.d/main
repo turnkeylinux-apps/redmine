@@ -24,9 +24,9 @@ sed -i "s/:hashed_password \(.*\)/:hashed_password => \"$SHA1_PASS\",/" $CONF
 [ "$FAB_HTTP_PROXY" ] && export HTTP_PROXY=$FAB_HTTP_PROXY
 cd $WEBROOT
 bundle --without=rmagick install
-rake generate_secret_token
-rake db:migrate RAILS_ENV="production"
-REDMINE_LANG=en rake redmine:load_default_data RAILS_ENV="production"
+bundle exec rake generate_secret_token
+bundle exec rake db:migrate RAILS_ENV="production"
+REDMINE_LANG=en bundle exec rake redmine:load_default_data RAILS_ENV="production"
 unset HTTP_PROXY
 
 project_init() {
