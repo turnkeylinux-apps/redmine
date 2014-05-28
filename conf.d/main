@@ -113,6 +113,9 @@ chown -R www-data:www-data $WEBROOT/tmp
 chown -R www-data:www-data $WEBROOT/log
 chown -R www-data:www-data $WEBROOT/files
 
+mkdir -p $WEBROOT/public/plugin_assets
+chown -R www-data:www-data $WEBROOT/public/plugin_assets
+
 # stop mysql
 /etc/init.d/mysql stop
 
