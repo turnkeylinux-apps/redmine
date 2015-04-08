@@ -5,7 +5,7 @@ dl() {
     cd $2; curl -L -f -O $PROXY $1; cd -
 }
 
-VERSION=2.5.1
+VERSION=3.0.1
 SRC="/usr/local/src"
 dl http://www.redmine.org/releases/redmine-${VERSION}.tar.gz $SRC
 dl http://www.redmine.org/releases/redmine-${VERSION}.tar.gz.md5 $SRC
