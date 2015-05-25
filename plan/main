@@ -2,3 +2,4 @@
 #include <turnkey/rails>
 #include <turnkey/revisioncontrol>
 
+libssl-dev
