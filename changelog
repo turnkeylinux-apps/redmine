@@ -1,3 +1,16 @@
+turnkey-redmine-14.0 (1) turnkey; urgency=low
+
+  * Upgraded to latest stable version of Redmine.
+
+  * Upstream source component versions:
+
+    redmine         3.0.3
+
+  * Note: Please refer to turnkey-core's changelog for changes common to all
+    appliances. Here we only describe changes specific to this appliance.
+
+ -- Stefan Davis <nafets.sivad@gmail.com>  Mon, 25 May 2015 03:52:36 +0000
+
 turnkey-redmine-13.0 (1) turnkey; urgency=low
 
   * Redmine:
