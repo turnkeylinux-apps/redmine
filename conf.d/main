@@ -107,10 +107,14 @@ TURNKEY_CREDIT="<div id='turnkey-credit'> <div> <a href='http://www.turnkeylinux
 FOOTER=$WEBROOT/app/views/layouts/base.html.erb
 sed -i "s|</body>|$TURNKEY_CREDIT\n</body>|" $FOOTER
 
+# setup logs for rotation
+rm -r $WEBROOT/log
+ln -s /var/log/redmine/ $WEBROOT/log
+
 # configure permissions
 chown -R root:www-data $WEBROOT
 chown -R www-data:www-data $WEBROOT/tmp
-chown -R www-data:www-data $WEBROOT/log
+chown -R www-data:www-data /var/log/redmine/
 chown -R www-data:www-data $WEBROOT/files
 
 mkdir -p $WEBROOT/public/plugin_assets
