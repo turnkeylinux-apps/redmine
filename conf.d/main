@@ -1,9 +1,12 @@
 #!/bin/sh -ex
 
 ADMIN_PASS=turnkey
+API_KEY=$(mcookie)
 
 SRC=/usr/local/src
 WEBROOT=/var/www/redmine
+
+DB_PASS=$(grep 'password:' $WEBROOT/config/database.yml | head -1 | sed 's/ *//g' | cut -d':' -f2)
 
 # start mysql
 /etc/init.d/mysql start
@@ -28,6 +31,9 @@ bundle exec rake generate_secret_token
 bundle exec rake db:migrate RAILS_ENV="production"
 REDMINE_LANG=en bundle exec rake redmine:load_default_data RAILS_ENV="production"
 unset HTTP_PROXY
+
+# requirement for reposman.rb
+gem install --no-ri --no-rdoc activeresource
 
 project_init() {
 mysql --defaults-extra-file=/etc/mysql/debian.cnf <<EOF
@@ -59,12 +65,12 @@ done
 }
 
 # configure projects and repositories
-project_init 1 git Repository::Git        /var/cache/git/helloworld.git
+project_init 1 git Repository::Git        /srv/repos/git/helloworld.git
 project_init 2 bzr Repository::Bazaar     /srv/repos/bzr/helloworld
 project_init 3 hg  Repository::Mercurial  /srv/repos/hg/helloworld
 project_init 4 svn Repository::Subversion file:///srv/repos/svn/helloworld
 
-# create welcome message
+# create welcome message and init settings
 mysql --defaults-extra-file=/etc/mysql/debian.cnf <<EOF
 USE redmine_production;
 INSERT settings (id, name, value) VALUES 
@@ -73,8 +79,25 @@ INSERT settings (id, name, value) VALUES
 * Log in as *admin* and start managing your projects
 * "TurnKey Linux Redmine appliance release notes":http://www.turnkeylinux.org/redmine
 * Redmine resources ("Guide":http://www.redmine.org/guide, "Forums":http://www.redmine.org/projects/redmine/boards, "FAQ":http://www.redmine.org/wiki/redmine/FAQ)
-');
+'),
+(2, 'enabled_scm', '---\n- Subversion\n- Mercurial\n- Bazaar\n- Git\n'),
+(4, 'sys_api_enabled', '1'),
+(5, 'sys_api_key', '$API_KEY');
 EOF
+
+# secure access to WS
+echo 'Include /etc/apache2/conf/redmine_secure.conf' >> /etc/apache2/conf/redmine.conf
+
+# secure API key
+echo $API_KEY >> $WEBROOT/api_key
+chmod 600 $WEBROOT/api_key
+
+# set up access control through dav_svn
+ln -s /var/www/redmine/extra/svn/Redmine.pm /usr/share/perl5/Apache/Redmine.pm
+
+echo 'Include /etc/apache2/conf/redmine_webaccess.conf' >> /etc/apache2/conf/redmine.conf
+
+sed -i "s|\\(RedmineDbPass\\) .*|\1 \"$DB_PASS\"|g" /etc/apache2/conf/redmine_webaccess.conf
 
 # configure outgoing email
 cat >$WEBROOT/config/configuration.yml<<EOF
