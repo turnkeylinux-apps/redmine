@@ -3,3 +3,11 @@
 #include <turnkey/revisioncontrol>
 
 libssl-dev
+
+imagemagick
+libmagickcore-dev
+libmagickwand-dev
+
+libapache2-mod-svn
+libapache-dbi-perl
+libapache2-mod-perl2
