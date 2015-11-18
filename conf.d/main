@@ -77,7 +77,7 @@ INSERT settings (id, name, value) VALUES
 (1, 'welcome_text', 'h2. Getting started
 
 * Log in as *admin* and start managing your projects
-* "TurnKey Linux Redmine appliance release notes":http://www.turnkeylinux.org/redmine
+* "TurnKey Linux Redmine appliance release notes":https://www.turnkeylinux.org/redmine
 * Redmine resources ("Guide":http://www.redmine.org/guide, "Forums":http://www.redmine.org/projects/redmine/boards, "FAQ":http://www.redmine.org/wiki/redmine/FAQ)
 '),
 (2, 'enabled_scm', '---\n- Subversion\n- Mercurial\n- Bazaar\n- Git\n'),
@@ -125,7 +125,7 @@ cat >>$WEBROOT/public/stylesheets/application.css<<EOF
 }
 EOF
 
-TURNKEY_CREDIT="<div id='turnkey-credit'> <div> <a href='http://www.turnkeylinux.org/redmine'>Redmine Appliance</a> - Powered by <a href='http://www.turnkeylinux.org'>TurnKey Linux</a> </div> </div>"
+TURNKEY_CREDIT="<div id='turnkey-credit'> <div> <a href='https://www.turnkeylinux.org/redmine'>Redmine Appliance</a> - Powered by <a href='https://www.turnkeylinux.org'>TurnKey Linux</a> </div> </div>"
 
 FOOTER=$WEBROOT/app/views/layouts/base.html.erb
 sed -i "s|</body>|$TURNKEY_CREDIT\n</body>|" $FOOTER
