@@ -9,7 +9,7 @@ WEBROOT=/var/www/redmine
 DB_PASS=$(grep 'password:' $WEBROOT/config/database.yml | head -1 | sed 's/ *//g' | cut -d':' -f2)
 
 # start mysql
-/etc/init.d/mysql start
+service mysql start
 
 # install redmine and configure it
 tar -zxf $SRC/redmine-*.tar.gz -C $(dirname $WEBROOT)
@@ -144,5 +144,5 @@ mkdir -p $WEBROOT/public/plugin_assets
 chown -R www-data:www-data $WEBROOT/public/plugin_assets
 
 # stop mysql
-/etc/init.d/mysql stop
+service mysql stop
 
