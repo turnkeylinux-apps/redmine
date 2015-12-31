@@ -86,7 +86,7 @@ INSERT settings (id, name, value) VALUES
 EOF
 
 # secure access to WS
-echo 'Include /etc/apache2/conf/redmine_secure.conf' >> /etc/apache2/conf/redmine.conf
+echo 'Include /etc/apache2/conf-available/redmine_secure.conf' >> /etc/apache2/conf-available/redmine.conf
 
 # secure API key
 echo $API_KEY >> $WEBROOT/api_key
@@ -95,9 +95,9 @@ chmod 600 $WEBROOT/api_key
 # set up access control through dav_svn
 ln -s /var/www/redmine/extra/svn/Redmine.pm /usr/share/perl5/Apache/Redmine.pm
 
-echo 'Include /etc/apache2/conf/redmine_webaccess.conf' >> /etc/apache2/conf/redmine.conf
+echo 'Include /etc/apache2/conf-available/redmine_webaccess.conf' >> /etc/apache2/conf-available/redmine.conf
 
-sed -i "s|\\(RedmineDbPass\\) .*|\1 \"$DB_PASS\"|g" /etc/apache2/conf/redmine_webaccess.conf
+sed -i "s|\\(RedmineDbPass\\) .*|\1 \"$DB_PASS\"|g" /etc/apache2/conf-available/redmine_webaccess.conf
 
 # configure outgoing email
 cat >$WEBROOT/config/configuration.yml<<EOF
