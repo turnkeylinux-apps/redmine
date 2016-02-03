@@ -35,7 +35,8 @@ Core`_, and on top of that:
     Bazaar      bzr://addr/bzr
     Subversion  svn://addr/svn
     Mercurial   http://addr:8080
-    Repositories are stored in /srv/repos.
+
+  Repositories are stored in /srv/repos.
 
 -  Recommended configurations:
    
