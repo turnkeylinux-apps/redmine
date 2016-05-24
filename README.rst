@@ -30,7 +30,7 @@ Core`_, and on top of that:
 
     Name        Protocol access
     ----        ---------------
-    Git         git://addr/git
+    Git         git clone root@addr:/srv/repos/git/helloworld
     Bazaar      bzr://addr/bzr
     Subversion  svn://addr/svn
     Mercurial   http://addr:8080
