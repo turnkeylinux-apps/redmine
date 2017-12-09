@@ -2,7 +2,7 @@
 #include <turnkey/rails>
 #include <turnkey/revisioncontrol>
 
-libssl-dev
+libssl1.0-dev
 
 imagemagick
 libmagickcore-dev
