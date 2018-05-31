@@ -27,6 +27,10 @@ sed -i "s/:hashed_password \(.*\)/:hashed_password => \"$SHA1_PASS\",/" $CONF
 [ "$FAB_HTTP_PROXY" ] && export HTTP_PROXY=$FAB_HTTP_PROXY
 cd $WEBROOT
 bundle install --without test development
+for i in test development production; do
+    mysql -e "DROP DATABASE IF EXISTS redmine_$i;"
+    mysql -e "CREATE DATABASE redmine_$i DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci;"
+done
 bundle exec rake generate_secret_token
 bundle exec rake db:migrate RAILS_ENV="production"
 REDMINE_LANG=en bundle exec rake redmine:load_default_data RAILS_ENV="production"
