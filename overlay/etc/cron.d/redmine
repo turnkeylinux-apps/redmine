@@ -1,3 +1,3 @@
 WEBROOT=/var/www/redmine
 
-* * * * * root ruby $WEBROOT/extra/svn/reposman.rb --redmine localhost --svn-dir /srv/repos/svn --owner www-data --url file:///srv/repos/svn --key-file $WEBROOT/api_key 2>&1 >> /var/log/reposman.log
+* * * * * root PATH=/usr/local/rbenv/bin:/usr/local/rbenv/shims:$PATH ruby $WEBROOT/extra/svn/reposman.rb --redmine localhost --svn-dir /srv/repos/svn --owner www-data --url file:///srv/repos/svn --key-file $WEBROOT/api_key 2>&1 >> /var/log/reposman.log
