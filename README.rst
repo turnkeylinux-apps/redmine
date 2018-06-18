@@ -13,7 +13,7 @@ Core`_, and on top of that:
 
 - Redmine configurations:
     - Installed from upstream source code to /var/www/redmine
-    - Supports Git, Bazaar, Mercurial and Subversion.
+    - Supports Git and Subversion.
     - Includes exemplary helloworld repositories.
     - Loaded default roles, trackers, statuses, workflows and
       enumerations.
@@ -30,10 +30,12 @@ Core`_, and on top of that:
 
     Name        Protocol access
     ----        ---------------
-    Git         git clone root@addr:/srv/repos/git/helloworld
-    Bazaar      bzr://addr/bzr
-    Subversion  svn://addr/svn
-    Mercurial   http://addr:8080
+    Git         http://$ipaddr/git
+                https://$ipaddr/git
+                ssh://vcs@$ipaddr/git
+    Subversion  http://$ipaddr/svn
+                svn://addr/svn
+                svn+ssh://vcs@$ipaddr/srv/repos/svn
 
   Repositories are stored in /srv/repos.
 
