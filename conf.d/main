@@ -5,7 +5,6 @@ API_KEY=$(mcookie)
 
 SRC=/usr/local/src
 WEBROOT=/var/www/redmine
-+CONF=$WEBROOT/db/migrate/001_setup.rb
 
 DB_PASS=$(grep 'password:' $WEBROOT/config/database.yml | head -1 | sed 's/ *//g' | cut -d':' -f2)
 
