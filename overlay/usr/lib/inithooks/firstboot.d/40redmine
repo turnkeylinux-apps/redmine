@@ -1,9 +1,8 @@
 #!/bin/bash -e
-# set redmine/vcs admin password and email
+# set redmine admin password and email
 
 . /etc/default/inithooks
 
 [ -e $INITHOOKS_CONF ] && . $INITHOOKS_CONF
 $INITHOOKS_PATH/bin/redmine.py --pass="$APP_PASS" --email="$APP_EMAIL"
-$INITHOOKS_PATH/bin/setpass.py vcs --pass="$APP_PASS"
 
