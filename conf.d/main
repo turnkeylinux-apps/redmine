@@ -1,11 +1,13 @@
-#!/bin/sh -ex
+#!/bin/bash -ex
 
 ADMIN_PASS=turnkey
 API_KEY=$(mcookie)
 
 SRC=/usr/local/src
 WEBROOT=/var/www/redmine
-+CONF=$WEBROOT/db/migrate/001_setup.rb
+
+# needed for git-http
+a2enmod cgi
 
 DB_PASS=$(grep 'password:' $WEBROOT/config/database.yml | head -1 | sed 's/ *//g' | cut -d':' -f2)
 
@@ -118,19 +120,12 @@ INSERT settings (id, name, value) VALUES
 (5, 'sys_api_key', '$API_KEY');
 EOF
 
-# secure access to WS
-echo 'Include /etc/apache2/conf-available/redmine_secure.conf' >> /etc/apache2/conf-available/redmine.conf
-
 # secure API key
 echo $API_KEY >> $WEBROOT/api_key
 chmod 600 $WEBROOT/api_key
 
-# set up access control through dav_svn
-ln -s /var/www/redmine/extra/svn/Redmine.pm /usr/share/perl5/Apache/Redmine.pm
-
-echo 'Include /etc/apache2/conf-available/redmine_webaccess.conf' >> /etc/apache2/conf-available/redmine.conf
-
-sed -i "s|\\(RedmineDbPass\\) .*|\1 \"$DB_PASS\"|g" /etc/apache2/conf-available/redmine_webaccess.conf
+a2enconf redmine_secure
+a2enconf redmine_webaccess
 
 # configure outgoing email
 cat >$WEBROOT/config/configuration.yml<<EOF

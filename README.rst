@@ -49,6 +49,7 @@ Credentials *(passwords set at first boot)*
 
 -  Webmin, Webshell, SSH, MySQL: username **root**
 -  Redmine: username **admin**
+-  Git, SVN: username **vcs**
 
 
 .. _TurnKey Core: https://www.turnkeylinux.org/core
