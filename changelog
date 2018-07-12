@@ -1,16 +1,16 @@
 turnkey-redmine-15.0 (1) turnkey; urgency=low
 
+  * Upgraded to latest stable version of Redmine (3.2.8)
+
   * Install Adminer directly from stretch/main repo
   
   * Replace MySQL with MariaDB
 
   * Mercurial (hg) & Bazaar (bzr) support removed (related to #1050)
-    [ Anton Pyrogovskyi ]
+    [ Anton Pyrogovskyi <anton@turnkeylinux.org> ]
   
   * Add workaround for MariaDB 10.1 
   
-  * Bump Redmine version to 3.2.8
-
   * Note: Please refer to turnkey-core's changelog for changes common to all
     appliances. Here we only describe changes specific to this appliance.
   

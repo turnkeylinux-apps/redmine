@@ -1,7 +1,7 @@
 Redmine - Integrated SCM & Project Management
 =============================================
 
-Redmine is a Rails web application that provides integrated project
+Redmine_ is a Rails web application that provides integrated project
 management features, issue tracking, and support for multiple version
 control programs. It includes calendar and gantt charts to aid visual
 representation of projects and their deadlines. It also features
@@ -13,6 +13,11 @@ Core`_, and on top of that:
 
 - Redmine configurations:
     - Installed from upstream source code to /var/www/redmine
+
+     **Security note**: Updates to Redmine may require supervision so
+     they **ARE NOT** configured to install automatically. See `Redmine
+     documentation`_ for upgrading.
+
     - Supports Git and Subversion.
     - Includes exemplary helloworld repositories.
     - Loaded default roles, trackers, statuses, workflows and
@@ -51,5 +56,6 @@ Credentials *(passwords set at first boot)*
 -  Redmine: username **admin**
 -  Git, SVN: username **vcs**
 
-
+.. _Redmine: http://www.redmine.org
 .. _TurnKey Core: https://www.turnkeylinux.org/core
+.. _Redmine documentation: http://www.redmine.org/projects/redmine/wiki/RedmineUpgrade
