@@ -1,6 +1,6 @@
 turnkey-redmine-15.0 (1) turnkey; urgency=low
 
-  * Upgraded to latest stable version of Redmine (3.2.8)
+  * Upgraded to latest stable version of Redmine (3.4.6)
 
   * Install Adminer directly from stretch/main repo
   
