@@ -51,7 +51,7 @@ REDMINE_LANG=en bundle exec rake redmine:load_default_data RAILS_ENV="production
 unset HTTP_PROXY
 
 # requirement for reposman.rb
-gem install --no-ri --no-rdoc activeresource
+gem install --no-document activeresource
 
 project_init() {
 mysql --defaults-extra-file=/etc/mysql/debian.cnf <<EOF
