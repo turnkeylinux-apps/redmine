@@ -90,6 +90,12 @@ INSERT settings (id, name, value) VALUES
 (5, 'sys_api_key', '$API_KEY');
 EOF
 
+# disable requirement to reset admin password on 1st login (pass set on firstboot)
+MYSQL_BATCH="mysql --user=root --batch --database redmine_production --execute"
+TIMESTAMP=$($MYSQL_BATCH "SELECT created_on FROM users WHERE id=1;" | tail -1)
+$MYSQL_BATCH "UPDATE users SET must_change_passwd = 0 WHERE id=1;"
+$MYSQL_BATCH "UPDATE users SET passwd_changed_on = \"$TIMESTAMP\" WHERE id=1;"
+
 # secure API key
 echo $API_KEY >> $WEBROOT/api_key
 chmod 600 $WEBROOT/api_key
