@@ -46,8 +46,8 @@ Core`_, and on top of that:
 
 -  Recommended configurations:
    
-   -  settings->hostname and path
-   -  settings->email notifications
+   -  settings -> hostname and path
+   -  settings -> email notifications
 
 Credentials *(passwords set at first boot)*
 -------------------------------------------
