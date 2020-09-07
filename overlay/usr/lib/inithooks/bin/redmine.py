@@ -59,8 +59,8 @@ def main():
     inithooks_cache.write('APP_EMAIL', email)
 
     salt = "".join(random.choice(string.ascii_letters) for line in range(16))
-    pass_bytes = (salt + str(hashlib.sha1(password.encode('utf-8')))).encode('utf-8')
-    hashpass = hashlib.sha1(pass_bytes).hexdigest()
+    pw_with_salt = salt + hashlib.sha1(password.encode('utf-8')).hexdigest()
+    hashpass = hashlib.sha1(pw_with_salt.encode('utf-8')).hexdigest()
     user_id = 1
 
     m = MySQL()
