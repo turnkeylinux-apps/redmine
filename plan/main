@@ -2,9 +2,6 @@
 #include <turnkey/rails>
 #include <turnkey/revisioncontrol>
 
-libssl-dev
-python3-pymysql
-
 imagemagick
 libmagickcore-dev
 libmagickwand-dev
