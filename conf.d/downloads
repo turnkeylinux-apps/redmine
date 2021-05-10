@@ -5,12 +5,11 @@ dl() {
     cd $2; curl -L -f -O $PROXY $1; cd -
 }
 
-VERSION=4.1.1
+VERSION=4.2.1
 SRC="/usr/local/src"
 dl http://www.redmine.org/releases/redmine-${VERSION}.tar.gz $SRC
-dl http://www.redmine.org/releases/redmine-${VERSION}.tar.gz.md5 $SRC
+dl http://www.redmine.org/releases/redmine-${VERSION}.tar.gz.sha256 $SRC
 
 cd $SRC
-md5sum -c redmine-${VERSION}.tar.gz.md5
-rm redmine-${VERSION}.tar.gz.md5
-
+shasum -c redmine-${VERSION}.tar.gz.sha256
+rm redmine-${VERSION}.tar.gz.sha256

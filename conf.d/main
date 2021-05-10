@@ -27,9 +27,10 @@ CONF=$WEBROOT/db/migrate/001_setup.rb
 SHA1_PASS=$(echo -n $ADMIN_PASS | sha1sum | cut -d " " -f 1)
 sed -i "s/:hashed_password \(.*\)/:hashed_password => \"$SHA1_PASS\",/" $CONF
 
-[ "$FAB_HTTP_PROXY" ] && export HTTP_PROXY=$FAB_HTTP_PROXY
+[ "$FAB_HTTP_PROXY" ] && export http_proxy=$FAB_HTTP_PROXY
 cd $WEBROOT
-bundle install --without test development
+bundle config set --local without 'test development'
+bundle install
 for i in test development production; do
     mysql -e "DROP DATABASE IF EXISTS redmine_$i;"
     mysql -e "CREATE DATABASE redmine_$i DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci;"
@@ -37,38 +38,40 @@ done
 bundle exec rake generate_secret_token
 bundle exec rake db:migrate RAILS_ENV="production"
 REDMINE_LANG=en bundle exec rake redmine:load_default_data RAILS_ENV="production"
-unset HTTP_PROXY
+unset http_proxy
 
 # requirement for reposman.rb
 gem install --no-document activeresource
 
 project_init() {
-mysql --defaults-extra-file=/etc/mysql/debian.cnf <<EOF
+    echo "Running 'project_init $1 $2 $3 $4'."
+    mysql <<EOF
 USE redmine_production;
 INSERT projects (id, name, is_public, created_on, updated_on, identifier, status, lft, rgt)
 VALUES ($1, '$2-helloworld', '1', '2012-01-01 13:00:00', '2012-01-01 13:00:00', '$2-helloworld', '1', '1', '2');
 EOF
 
-mysql --defaults-extra-file=/etc/mysql/debian.cnf <<EOF
+    mysql <<EOF
 USE redmine_production;
 INSERT repositories (id, project_id, url, root_url, type, path_encoding, log_encoding, identifier, is_default)
 VALUES ($1, '$1', '$4', '$4', '$3', 'UTF-8', 'UTF-8', '$2-helloworld', '1');
 EOF
 
-names="issue_tracking time_tracking news documents files wiki repository boards"
-for name in $names; do
-mysql --defaults-extra-file=/etc/mysql/debian.cnf <<EOF
+    names="issue_tracking time_tracking news documents files wiki repository boards"
+    for name in $names; do
+        mysql <<EOF
 USE redmine_production;
 INSERT enabled_modules (id, project_id, name) VALUES (NULL, '$1', '$name');
 EOF
-done
+    done
 
-for tracker_id in 1 2 3; do
-mysql --defaults-extra-file=/etc/mysql/debian.cnf <<EOF
+    for tracker_id in 1 2 3; do
+        echo "id = '$tracker_id'"
+        mysql <<EOF
 USE redmine_production;
 INSERT projects_trackers (project_id, tracker_id) VALUES ('$1', '$tracker_id');
 EOF
-done
+    done
 }
 
 # configure projects and repositories
@@ -76,22 +79,22 @@ project_init 1 git Repository::Git        /srv/repos/git/helloworld/.git
 project_init 2 svn Repository::Subversion file:///srv/repos/svn/helloworld
 
 # create welcome message and init settings
-mysql --defaults-extra-file=/etc/mysql/debian.cnf <<EOF
+mysql <<EOF
 USE redmine_production;
-INSERT settings (id, name, value) VALUES 
-(1, 'welcome_text', 'h2. Getting started
+INSERT settings (name, value) VALUES
+('welcome_text', 'h2. Getting started
 
 * Log in as *admin* and start managing your projects
 * "TurnKey Linux Redmine appliance release notes":https://www.turnkeylinux.org/redmine
 * Redmine resources ("Guide":http://www.redmine.org/guide, "Forums":http://www.redmine.org/projects/redmine/boards, "FAQ":http://www.redmine.org/wiki/redmine/FAQ)
 '),
-(2, 'enabled_scm', '---\n- Subversion\n- Mercurial\n- Bazaar\n- Git\n'),
-(4, 'sys_api_enabled', '1'),
-(5, 'sys_api_key', '$API_KEY');
+('enabled_scm', '---\n- Subversion\n- Git\n'),
+('sys_api_enabled', '1'),
+('sys_api_key', '$API_KEY');
 EOF
 
 # disable requirement to reset admin password on 1st login (pass set on firstboot)
-MYSQL_BATCH="mysql --user=root --batch --database redmine_production --execute"
+MYSQL_BATCH="mysql --batch --database redmine_production --execute"
 TIMESTAMP=$($MYSQL_BATCH "SELECT created_on FROM users WHERE id=1;" | tail -1)
 $MYSQL_BATCH "UPDATE users SET must_change_passwd = 0 WHERE id=1;"
 $MYSQL_BATCH "UPDATE users SET passwd_changed_on = \"$TIMESTAMP\" WHERE id=1;"
@@ -149,4 +152,3 @@ chown -R www-data:www-data $WEBROOT/public/plugin_assets
 
 # stop mysql
 service mysql stop
-
