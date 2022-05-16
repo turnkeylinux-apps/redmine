@@ -1,3 +1,12 @@
+turnkey-redmine-17.0 (1) turnkey; urgency=low
+
+  * Update to latest stable Redmine - v5.0.0.
+
+  * Note: Please refer to turnkey-core's 17.0 changelog for changes common to all
+    appliances. Here we only describe changes specific to this appliance.
+
+ -- Zhenya Hvorostian <zhenya@turnkeylinux.org>  Fri, 06 May 2022 19:37:04 +0300
+
 turnkey-redmine-16.1 (1) turnkey; urgency=low
 
   * Update to latest stable Redmine - v4.2.1.
