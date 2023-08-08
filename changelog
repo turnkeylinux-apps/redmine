@@ -1,3 +1,14 @@
+turnkey-redmine-18 (1) turnkey; urgency=low
+
+  * Install latest upstream version of Redmine: 5.0.5
+
+  * Re-build on TurnKey Linux 18 (Debian 12 'bookworm')
+
+  * Note: Please refer to turnkey-core's changelog for changes common to all
+    appliances. Here we only describe changes specific to this appliance.
+
+ -- Daniele Lolli <github@uncledan.it>  Tue, 8 Aug 2023 19:00:00 +0200
+
 turnkey-redmine-17.1 (1) turnkey; urgency=low
 
   * Updated all Debian packages to latest.
