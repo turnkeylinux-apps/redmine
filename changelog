@@ -1,3 +1,9 @@
+turnkey-redmine-17.2 (1) turnkey; urgency=low
+
+  * Update to latest stable Redmine - v5.0.5.
+
+ -- Davide Mainardi <davide@mainardisoluzioni.com>  Mon, 10 Apr 2023 12:37:18 +0000
+
 turnkey-redmine-17.1 (1) turnkey; urgency=low
 
   * Updated all Debian packages to latest.
