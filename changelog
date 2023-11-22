@@ -1,8 +1,12 @@
-turnkey-redmine-17.2 (1) turnkey; urgency=low
+turnkey-redmine-18.0 (1) turnkey; urgency=low
 
-  * Update to latest stable Redmine - v5.0.5.
+  * Install latest upstream version of Redmine: 5.0.5
 
- -- Davide Mainardi <davide@mainardisoluzioni.com>  Mon, 10 Apr 2023 12:37:18 +0000
+  * Re-build on TurnKey Linux 18 (Debian 12 'bookworm')
+
+  * Thanks too to Davide Mainardi <davide@mainardisoluzioni.com>
+
+ -- Daniele Lolli <github@uncledan.it>  Tue, 8 Aug 2023 19:00:00 +0200
 
 turnkey-redmine-17.1 (1) turnkey; urgency=low
 
