@@ -12,7 +12,7 @@ a2enmod cgi
 DB_PASS=$(grep 'password:' $WEBROOT/config/database.yml | head -1 | sed 's/ *//g' | cut -d':' -f2)
 
 # start mysql
-service mysql start
+systemctl start mariadb
 
 # install redmine and configure it
 tar -zxf $SRC/redmine-*.tar.gz -C $(dirname $WEBROOT)
@@ -27,14 +27,17 @@ CONF=$WEBROOT/db/migrate/001_setup.rb
 SHA1_PASS=$(echo -n $ADMIN_PASS | sha1sum | cut -d " " -f 1)
 sed -i "s/:hashed_password \(.*\)/:hashed_password => \"$SHA1_PASS\",/" $CONF
 
-[ "$FAB_HTTP_PROXY" ] && export http_proxy=$FAB_HTTP_PROXY
+[[ "$FAB_HTTP_PROXY" ]] && export http_proxy=$FAB_HTTP_PROXY
+
 cd $WEBROOT
 bundle config set --local without 'test development'
 bundle install
+
 for i in test development production; do
     mysql -e "DROP DATABASE IF EXISTS redmine_$i;"
     mysql -e "CREATE DATABASE redmine_$i DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci;"
 done
+
 bundle exec rake generate_secret_token
 bundle exec rake db:migrate RAILS_ENV="production"
 REDMINE_LANG=en bundle exec rake redmine:load_default_data RAILS_ENV="production"
@@ -151,4 +154,4 @@ mkdir -p $WEBROOT/public/plugin_assets
 chown -R www-data:www-data $WEBROOT/public/plugin_assets
 
 # stop mysql
-service mysql stop
+systemctl stop mariadb
