@@ -1,15 +1,29 @@
 #!/bin/bash -ex
 
 dl() {
-    [ "$FAB_HTTP_PROXY" ] && PROXY="--proxy $FAB_HTTP_PROXY"
+    [[ "$FAB_HTTP_PROXY" ]] && PROXY="--proxy $FAB_HTTP_PROXY"
     cd $2; curl -L -f -O $PROXY $1; cd -
 }
 
-VERSION=5.0.5
-SRC="/usr/local/src"
-dl http://www.redmine.org/releases/redmine-${VERSION}.tar.gz $SRC
-dl http://www.redmine.org/releases/redmine-${VERSION}.tar.gz.sha256 $SRC
+get_html_tags() {
+    local IFS='>'
+    read -d '<' TAG VALUE
+}
 
-cd $SRC
-shasum -c redmine-${VERSION}.tar.gz.sha256
-rm redmine-${VERSION}.tar.gz.sha256
+TMP_DIR=$(mktemp -d /tmp/redmine.XXXXX)
+dl https://www.redmine.org/projects/redmine/wiki/Download "$TMP_DIR"
+HTML="$TMP_DIR/Download"
+HTML_TAGS=$(cat $HTML | while get_html_tags "$HTML"; do echo $TAG; done)
+rm -rf "$HTML"
+RELEASE=$(sed -En 's|^a href="/releases/(redmine-[0-9\.]+\.tar.gz)".*$|\1|p' \
+    <<<"$HTML_TAGS" \
+    | sort -V \
+    | tail -1)
+
+SRC="/usr/local/src"
+dl "https://www.redmine.org/releases/$RELEASE" "$SRC"
+dl "https://www.redmine.org/releases/$RELEASE.sha256" "$SRC"
+
+cd "$SRC"
+shasum -c "$RELEASE.sha256"
+rm "$RELEASE.sha256"
