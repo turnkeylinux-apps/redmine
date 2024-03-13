@@ -1,10 +1,14 @@
 turnkey-redmine-18.0 (1) turnkey; urgency=low
 
-  * Install latest upstream version of Redmine: 5.0.5
+  * Install latest upstream version of Redmine: 5.1.2
     [Daniele Lolli <github@uncledan.it>]
 
   * Thanks too to Davide Mainardi <davide@mainardisoluzioni.com>
     [Daniele Lolli <github@uncledan.it>]
+
+  * Confconsole: bugfix broken DNS-01 Let's Encrypt challenge- closes #1876 &
+    #1895.
+    [Jeremy Davis <jeremy@turnkeylinux.org>]
 
   * Ensure hashfile includes URL to public key - closes #1864.
 
@@ -43,6 +47,7 @@ turnkey-redmine-18.0 (1) turnkey; urgency=low
 
   * Web management console (webmin):
     - Upgraded webmin to v2.105.
+    - Replace webmin-shell with webmin-xterm module by default - closes #1904.
     - Removed stunnel reverse proxy (Webmin hosted directly now).
     - Ensure that Webmin uses HTTPS with default cert
       (/etc/ssl/private/cert.pem).
@@ -78,7 +83,7 @@ turnkey-redmine-18.0 (1) turnkey; urgency=low
 
   * Use MariaDB (MySQL replacement) v10.11.3 (from debian repos).
 
- -- Jeremy Davis <jeremy@turnkeylinux.org>  Thu, 25 Jan 2024 07:50:49 +0000
+ -- Jeremy Davis <jeremy@turnkeylinux.org>  Wed, 13 Mar 2024 07:37:42 +0000
 
 turnkey-redmine-17.1 (1) turnkey; urgency=low
 
