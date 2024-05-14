@@ -85,11 +85,16 @@ project_init 2 svn Repository::Subversion file:///srv/repos/svn/helloworld
 mysql <<EOF
 USE redmine_production;
 INSERT settings (name, value) VALUES
-('welcome_text', 'h2. Getting started
+('welcome_text', '# Getting started
 
-* Log in as *admin* and start managing your projects
-* "TurnKey Linux Redmine appliance release notes":https://www.turnkeylinux.org/redmine
-* Redmine resources ("Guide":http://www.redmine.org/guide, "Forums":http://www.redmine.org/projects/redmine/boards, "FAQ":http://www.redmine.org/wiki/redmine/FAQ)
+* Sign into Redmine (top right) start managing your projects
+  - Username: **admin**
+  - Use the password that was _set at firstboot_
+* [TurnKey Linux Redmine appliance release notes](https://www.turnkeylinux.org/redmine)
+* Redmine resources
+  - [Guide](https://www.redmine.org/guide)
+  - [Forums](https://www.redmine.org/projects/redmine/boards)
+  - [FAQ](https://www.redmine.org/wiki/redmine/FAQ)
 '),
 ('enabled_scm', '---\n- Subversion\n- Git\n'),
 ('sys_api_enabled', '1'),
