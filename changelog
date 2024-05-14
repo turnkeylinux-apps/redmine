@@ -1,3 +1,14 @@
+turnkey-redmine-18.1 (1) turnkey; urgency=low
+
+  * Rebuild to fix critical bug: #1947.
+
+  * Adds 'mariadb_admin' DB user - exclusively for use in the Webmin MariaDB
+    module. Part of #1945.
+
+  * Other general tidying & improvements.
+
+ -- Jeremy Davis <jeremy@turnkeylinux.org>  Tue, 14 May 2024 08:52:32 +0000
+
 turnkey-redmine-18.0 (1) turnkey; urgency=low
 
   * Install latest upstream version of Redmine: 5.1.2
