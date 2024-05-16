@@ -14,6 +14,24 @@ DB_PASS=$(grep 'password:' $WEBROOT/config/database.yml | head -1 | sed 's/ *//g
 # start mysql
 systemctl start mariadb
 
+# remove adminer user - redmine doesn't have adminer
+mariadb_admin_pass=$(mcookie)$(mcookie)
+mysql -e "DROP USER IF EXISTS adminer;"
+mysql -e "GRANT ALL PRIVILEGES ON *.* TO mariadb_admin@localhost IDENTIFIED BY '$mariadb_admin_pass';"
+mysql -e "FLUSH PRIVILEGES;"
+
+#  configure webmin specific db user - updated in firstboot script
+#  this should probably be move to common - for use in all apps that doesn't have adminer
+conf=/etc/webmin/mysql/config
+# 'login' should exist in webmin conf
+sed -i "\|^login=|s|=.*|=mariadb_admin|" $conf
+# 'pass' shouldn't exist in webmin conf, but just in case it does
+if grep -q '^pass=' $conf; then
+    sed -i "\|^pass=|s|=.*|=$mariadb_admin_pass|" $conf
+else
+    echo "pass=$mariadb_admin_pass" >> $conf
+fi
+
 # install redmine and configure it
 tar -zxf $SRC/redmine-*.tar.gz -C $(dirname $WEBROOT)
 rm -rf $SRC/redmine-*.tar.gz
@@ -35,8 +53,8 @@ bundle install
 
 for i in test development production; do
     mysql -e "DROP DATABASE IF EXISTS redmine_$i;"
-    mysql -e "CREATE DATABASE redmine_$i DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci;"
 done
+mysql -e "CREATE DATABASE redmine_production DEFAULT CHARACTER SET utf8mb4 DEFAULT COLLATE utf8mb4_general_ci;"
 
 bundle exec rake generate_secret_token
 bundle exec rake db:migrate RAILS_ENV="production"
@@ -85,11 +103,16 @@ project_init 2 svn Repository::Subversion file:///srv/repos/svn/helloworld
 mysql <<EOF
 USE redmine_production;
 INSERT settings (name, value) VALUES
-('welcome_text', 'h2. Getting started
+('welcome_text', '# Getting started
 
-* Log in as *admin* and start managing your projects
-* "TurnKey Linux Redmine appliance release notes":https://www.turnkeylinux.org/redmine
-* Redmine resources ("Guide":http://www.redmine.org/guide, "Forums":http://www.redmine.org/projects/redmine/boards, "FAQ":http://www.redmine.org/wiki/redmine/FAQ)
+* Sign into Redmine (top right) start managing your projects
+  - Username: **admin**
+  - Use the password that was _set at firstboot_
+* [TurnKey Linux Redmine appliance release notes](https://www.turnkeylinux.org/redmine)
+* Redmine resources
+  - [Guide](https://www.redmine.org/guide)
+  - [Forums](https://www.redmine.org/projects/redmine/boards)
+  - [FAQ](https://www.redmine.org/wiki/redmine/FAQ)
 '),
 ('enabled_scm', '---\n- Subversion\n- Git\n'),
 ('sys_api_enabled', '1'),
