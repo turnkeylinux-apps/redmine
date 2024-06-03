@@ -1,6 +1,5 @@
 Web:        http://$ipaddr
             https://$ipaddr
-Web shell:  https://$ipaddr:12320
 Webmin:     https://$ipaddr:12321
 SVN:        svn://$ipaddr/svn
             svn+ssh://vcs@$ipaddr/srv/repos/svn
