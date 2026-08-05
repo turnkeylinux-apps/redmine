@@ -3,5 +3,5 @@ Web:        http://$ipaddr
 Webmin:     https://$ipaddr:12321
 SVN:        svn://$ipaddr/svn
             svn+ssh://vcs@$ipaddr/srv/repos/svn
-GIT:        ssh://vcs@$ipaddr/git
+GIT:        vcs@$ipaddr/git
 SSH/SFTP:   root@$ipaddr (port 22)
