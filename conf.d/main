@@ -55,6 +55,13 @@ for i in test development production; do
     mysql -e "DROP DATABASE IF EXISTS redmine_$i;"
 done
 mysql -e "CREATE DATABASE redmine_production DEFAULT CHARACTER SET utf8mb4 DEFAULT COLLATE utf8mb4_general_ci;"
+mysql -e "CREATE DATABASE redmine_production_cache DEFAULT CHARACTER SET utf8mb4 DEFAULT COLLATE utf8mb4_general_ci;"
+mysql -e "CREATE DATABASE redmine_production_queue DEFAULT CHARACTER SET utf8mb4 DEFAULT COLLATE utf8mb4_general_ci;"
+mysql -e "CREATE DATABASE redmine_production_cable DEFAULT CHARACTER SET utf8mb4 DEFAULT COLLATE utf8mb4_general_ci;"
+mysql -e "GRANT ALL PRIVILEGES ON redmine_production.* TO redmine@localhost IDENTIFIED BY '$DB_PASS';"
+mysql -e "GRANT ALL PRIVILEGES ON redmine_production_cache.* TO redmine@localhost IDENTIFIED BY '$DB_PASS';"
+mysql -e "GRANT ALL PRIVILEGES ON redmine_production_queue.* TO redmine@localhost IDENTIFIED BY '$DB_PASS';"
+mysql -e "GRANT ALL PRIVILEGES ON redmine_production_cable.* TO redmine@localhost IDENTIFIED BY '$DB_PASS';"
 
 bundle exec rake generate_secret_token
 bundle exec rake db:migrate RAILS_ENV="production"
@@ -143,7 +150,7 @@ production:
 EOF
 
 # turnkey-credit (passenger substitute x2 bug)
-cat >>$WEBROOT/public/stylesheets/application.css<<EOF
+cat >>$WEBROOT/app/assets/stylesheets/application.css<<EOF
 #turnkey-credit {
     font-family: Tahoma,Sans,Arial,Helvetica,Verdana,sans-serif;
     font-size: 11px;
@@ -175,6 +182,8 @@ chown -R www-data:www-data $WEBROOT/files
 
 mkdir -p $WEBROOT/public/plugin_assets
 chown -R www-data:www-data $WEBROOT/public/plugin_assets
+chown -R www-data:www-data $WEBROOT/app/assets
+chown -R www-data:www-data $WEBROOT/public/assets
 
 # stop mysql
 systemctl stop mariadb

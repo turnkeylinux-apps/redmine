@@ -1,3 +1,15 @@
+turnkey-redmine-19.0 (1) turnkey; urgency=low
+
+  * Install latest upstream version of Redmine: 7.0.0
+
+  * Update other relevant dependencies/tools:
+
+    - ruby:     v3.4.10
+    - rbenv:    v1.3.2
+    - yarn:     v1.22.22
+
+ -- Stefan Davis <nafets.sivad@gmail.com>  Wed, 08 Jul 2026 01:32:32 +0000
+
 turnkey-redmine-18.1 (1) turnkey; urgency=low
 
   * Rebuild to fix critical bug: #1947.
