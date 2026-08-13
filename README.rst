@@ -45,17 +45,17 @@ Core`_, and on top of that:
   Repositories are stored in /srv/repos.
 
 -  Recommended configurations:
-   
+
    -  settings -> hostname and path
    -  settings -> email notifications
 
 Credentials *(passwords set at first boot)*
 -------------------------------------------
 
--  Webmin, Webshell, SSH, MySQL: username **root**
+-  Webmin, SSH, MySQL: username **root**
 -  Redmine: username **admin**
 -  Git, SVN: username **vcs**
 
-.. _Redmine: http://www.redmine.org
+.. _Redmine: https://www.redmine.org
 .. _TurnKey Core: https://www.turnkeylinux.org/core
-.. _Redmine documentation: http://www.redmine.org/projects/redmine/wiki/RedmineUpgrade
+.. _Redmine documentation: https://www.redmine.org/projects/redmine/wiki/RedmineUpgrade
