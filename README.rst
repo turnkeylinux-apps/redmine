@@ -12,7 +12,8 @@ The Redmine appliance includes all the standard features in `TurnKey
 Core`_, and on top of that:
 
 - Redmine configurations:
-    - Installed from upstream source code to /var/www/redmine
+    - Installed from a pinned, checksum-verified upstream release to
+      /var/www/redmine.
 
      **Security note**: Updates to Redmine may require supervision so
      they **ARE NOT** configured to install automatically. See `Redmine
