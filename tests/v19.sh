@@ -23,6 +23,11 @@ curl "${curl_args[@]}" -b "$work/cookies" -c "$work/cookies" \
     --data-urlencode "password=$password" \
     --data-urlencode login=Login \
     "$base/login"
+grep -Eq '^HTTP/[^ ]+ 302([[:space:]]|$)' "$work/login.headers"
+! grep -Eqi '^location: .*/login' "$work/login.headers"
+curl "${curl_args[@]}" -b "$work/cookies" \
+    "$base/my/account" >"$work/account.html"
+grep -Eq 'href="[^"]*/logout' "$work/account.html"
 curl "${curl_args[@]}" -b "$work/cookies" \
     "$base/projects/git-helloworld" >"$work/project.html"
 grep -Eqi 'git-helloworld|overview|activity' "$work/project.html"
@@ -36,6 +41,9 @@ runuser -u www-data -- rm /var/www/redmine/tmp/.tkl-v19-write-test
 /usr/local/rbenv/shims/ruby -e 'require "active_resource"; abort unless ActiveResource'
 
 systemctl restart mariadb.service apache2.service
+curl "${curl_args[@]}" -b "$work/cookies" \
+    "$base/my/account" >"$work/account-after-restart.html"
+grep -Eq 'href="[^"]*/logout' "$work/account-after-restart.html"
 curl "${curl_args[@]}" -b "$work/cookies" \
     "$base/projects/git-helloworld" >"$work/project-after-restart.html"
 grep -Fqi git-helloworld "$work/project-after-restart.html"
