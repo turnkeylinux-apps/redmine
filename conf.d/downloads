@@ -1,22 +1,27 @@
-#!/bin/bash -ex
+#!/bin/bash -eux
+
+VERSION=7.0.1
+REDMINE_SHA256=68538b4310fa50ac79a521045cb55fe3bcffed5c1562d6844cf90e66e7619209
+ACTIVERESOURCE_VERSION=6.2.0
+ACTIVERESOURCE_SHA256=818ca60d3cd1ff7bbb7277f41250ad4d61a7cdbe30fbf52b2145e1b66ed13900
+XML_SERIALIZER_VERSION=1.0.3
+XML_SERIALIZER_SHA256=fa1b16305e7254cc58a59c68833e3c0a593a59c8ab95d3be5aaea7cd9416c397
+SRC=/usr/local/src
 
 dl() {
-    [[ "$FAB_HTTP_PROXY" ]] && PROXY="--proxy $FAB_HTTP_PROXY"
-    cd "$2"; curl -L -f -O $PROXY "$1"; cd -
+    local proxy_args=()
+    [[ -n "${FAB_HTTP_PROXY:-}" ]] && proxy_args=(--proxy "$FAB_HTTP_PROXY")
+    curl --proto '=https' --tlsv1.2 -L -f "${proxy_args[@]}" "$1" -o "$2"
 }
 
-get_html_tags() {
-    local IFS='>'
-    read -d '<' TAG VALUE
-}
+RELEASE="redmine-$VERSION.tar.gz"
+ACTIVERESOURCE="activeresource-$ACTIVERESOURCE_VERSION.gem"
+XML_SERIALIZER="activemodel-serializers-xml-$XML_SERIALIZER_VERSION.gem"
 
-TMP_DIR="$(mktemp -d /tmp/redmine.XXXXX)"
-RELEASE="redmine-$(gh_releases redmine/redmine | sort -V | tail -1).tar.gz"
+dl "https://www.redmine.org/releases/$RELEASE" "$SRC/$RELEASE"
+dl "https://rubygems.org/downloads/$ACTIVERESOURCE" "$SRC/$ACTIVERESOURCE"
+dl "https://rubygems.org/downloads/$XML_SERIALIZER" "$SRC/$XML_SERIALIZER"
 
-SRC="/usr/local/src"
-dl "https://www.redmine.org/releases/$RELEASE" "$SRC"
-dl "https://www.redmine.org/releases/$RELEASE.sha256" "$SRC"
-
-cd "$SRC"
-shasum -c "$RELEASE.sha256"
-rm "$RELEASE.sha256"
+echo "$REDMINE_SHA256  $SRC/$RELEASE" | sha256sum --check --strict
+echo "$ACTIVERESOURCE_SHA256  $SRC/$ACTIVERESOURCE" | sha256sum --check --strict
+echo "$XML_SERIALIZER_SHA256  $SRC/$XML_SERIALIZER" | sha256sum --check --strict

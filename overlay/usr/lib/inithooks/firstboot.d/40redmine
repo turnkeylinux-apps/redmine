@@ -4,5 +4,5 @@
 . /etc/default/inithooks
 
 [ -e $INITHOOKS_CONF ] && . $INITHOOKS_CONF
-$INITHOOKS_PATH/bin/redmine.py --pass="$APP_PASS" --email="$APP_EMAIL"
-
+printf '%s\n' "$APP_PASS" | \
+    $INITHOOKS_PATH/bin/redmine.py --pass-stdin --email="$APP_EMAIL"
