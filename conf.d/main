@@ -5,6 +5,9 @@ API_KEY=$(mcookie)
 
 SRC=/usr/local/src
 WEBROOT=/var/www/redmine
+VERSION=7.0.1
+ACTIVERESOURCE_VERSION=6.2.0
+XML_SERIALIZER_VERSION=1.0.3
 
 # needed for git-http
 a2enmod cgi
@@ -33,11 +36,12 @@ else
 fi
 
 # install redmine and configure it
-tar -zxf $SRC/redmine-*.tar.gz -C $(dirname $WEBROOT)
-rm -rf $SRC/redmine-*.tar.gz
+tar --no-same-owner -zxf "$SRC/redmine-$VERSION.tar.gz" \
+    -C "$(dirname "$WEBROOT")"
+rm -f "$SRC/redmine-$VERSION.tar.gz"
 
 mv $WEBROOT $WEBROOT.orig
-mv $(dirname $WEBROOT)/redmine-* $WEBROOT
+mv "$(dirname "$WEBROOT")/redmine-$VERSION" "$WEBROOT"
 cp $WEBROOT.orig/config/database.yml $WEBROOT/config/database.yml
 rm -rf $WEBROOT.orig
 
@@ -69,7 +73,13 @@ REDMINE_LANG=en bundle exec rake redmine:load_default_data RAILS_ENV="production
 unset http_proxy
 
 # requirement for reposman.rb
-gem install --no-document activeresource
+gem install --local --no-document \
+    "$SRC/activemodel-serializers-xml-$XML_SERIALIZER_VERSION.gem"
+gem install --local --no-document \
+    "$SRC/activeresource-$ACTIVERESOURCE_VERSION.gem"
+rm -f \
+    "$SRC/activeresource-$ACTIVERESOURCE_VERSION.gem" \
+    "$SRC/activemodel-serializers-xml-$XML_SERIALIZER_VERSION.gem"
 
 project_init() {
     echo "Running 'project_init $1 $2 $3 $4'."

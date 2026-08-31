@@ -3,6 +3,8 @@
 
 Option:
     --pass=     unless provided, will ask interactively
+    --pass-stdin
+                read the password from standard input
     --email=    unless provided, will ask interactively
 
 """
@@ -11,8 +13,8 @@ import sys
 import getopt
 from libinithooks import inithooks_cache
 import hashlib
-import random
 import string
+import secrets
 
 from libinithooks.dialog_wrapper import Dialog
 from mysqlconf import MySQL
@@ -26,8 +28,8 @@ def usage(s=None):
 
 def main():
     try:
-        opts, args = getopt.gnu_getopt(sys.argv[1:], "h",
-                                       ['help', 'pass=', 'email='])
+        opts, args = getopt.gnu_getopt(
+            sys.argv[1:], "h", ['help', 'pass=', 'pass-stdin', 'email='])
     except getopt.GetoptError as e:
         usage(e)
 
@@ -38,6 +40,8 @@ def main():
             usage()
         elif opt == '--pass':
             password = val
+        elif opt == '--pass-stdin':
+            password = sys.stdin.readline().rstrip('\r\n')
         elif opt == '--email':
             email = val
 
@@ -58,16 +62,18 @@ def main():
 
     inithooks_cache.write('APP_EMAIL', email)
 
-    salt = "".join(random.choice(string.ascii_letters) for line in range(16))
+    salt = "".join(secrets.choice(string.ascii_letters) for _ in range(16))
     pw_with_salt = salt + hashlib.sha1(password.encode('utf-8')).hexdigest()
     hashpass = hashlib.sha1(pw_with_salt.encode('utf-8')).hexdigest()
     user_id = 1
 
     m = MySQL()
-    m.execute('UPDATE redmine_production.email_addresses SET address=\"%s\" WHERE user_id=%i;' % (email, user_id))
-    m.execute('UPDATE redmine_production.users SET salt=\"%s\" WHERE login=\"admin\" AND id=%i;' % (salt, user_id))
-    m.execute('UPDATE redmine_production.users SET hashed_password=\"%s\" WHERE login=\"admin\" AND id = %i;' % (hashpass, user_id))
+    m.execute('UPDATE redmine_production.email_addresses SET address=%s '
+              'WHERE user_id=%s;', (email, user_id))
+    m.execute('UPDATE redmine_production.users SET salt=%s '
+              'WHERE login="admin" AND id=%s;', (salt, user_id))
+    m.execute('UPDATE redmine_production.users SET hashed_password=%s '
+              'WHERE login="admin" AND id=%s;', (hashpass, user_id))
 
 if __name__ == "__main__":
     main()
-
